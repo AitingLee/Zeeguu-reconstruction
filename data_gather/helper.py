@@ -1,5 +1,4 @@
 import re
-from pathlib import Path
 
 def read_file_lines(file_path):
     try:
@@ -16,15 +15,10 @@ def module_name_from_file_path(code_root_folder, full_path, suffix_to_strip):
     file_name = file_name.replace(suffix_to_strip, "")
     return file_name
 
-def scan_files_and_build_dictionary(folder_path, file_suffix, relevant_func, extract_func):
-    files = Path(folder_path).rglob(f'*{file_suffix}')
-    result_dictionary = {}
-    for file in files:
-        file_path = str(file)
-        source_module = module_name_from_file_path(folder_path, file_path, file_suffix)
-        if not relevant_func(source_module):
-            continue
-        endpoints = extract_func(file_path)
-        for endpoint in endpoints:
-            result_dictionary[endpoint] = source_module
-    return result_dictionary
+def normalize_endpoint_string(endpoint_str: str) -> str:
+    normalized_str = re.sub(r'<[^>]+>', r'${}', endpoint_str)
+    normalized_str = re.sub(r'\$\{[^}]+\}', r'${}', normalized_str)
+    normalized_str = normalized_str.split('?', 1)[0]
+    if normalized_str.startswith('/'):
+        normalized_str = normalized_str[1:]
+    return normalized_str
