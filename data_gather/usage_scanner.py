@@ -3,9 +3,8 @@ import os
 import re
 from data_gather.helper import read_file_lines
 from pathlib import Path
-from common.config import WEB_SRC_FOLDER
+from common.config import WEB_SRC_FOLDER, TARGET_FOLDERS
 
-target_folders = ["articles", "exercises", "pages", "reader", "teacher", "userDashboard", "videos", "words"]
 
 def extract_api_var_name(file_path: str):
     lines = read_file_lines(file_path)
@@ -35,7 +34,7 @@ def build_usage_list(
 
     result_list = []
 
-    for folder_name in target_folders:
+    for folder_name in TARGET_FOLDERS:
         folder_path_str = os.path.join(WEB_SRC_FOLDER, folder_name) + '/'
         files = Path(folder_path_str).rglob('*.js')
 
