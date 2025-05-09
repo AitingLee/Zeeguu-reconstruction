@@ -1,13 +1,16 @@
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
-from common.config import TARGET_FOLDERS, ENDPOINTS_FOLDER, CALLERS_FOLDER
+from common.config import TARGET_FOLDERS, ENDPOINTS_FOLDER, CALLERS_FOLDER, SOURCE_FOLDER, WEB_REPO_URL, API_REPO_URL
+from common.repo_donwloader import download_repo
 from data_gather.callers_builder import build_api_caller_dictionary
 from data_gather.endpoints_builder import build_api_endpoints_dictionary
 from data_gather.usage_scanner import build_usage_list
 from visualization.graph_builder import visualize_with_graph
 
 def get_full_usage_list_data():
+    download_repo(SOURCE_FOLDER, 'zeeguu_web', WEB_REPO_URL)
+    download_repo(SOURCE_FOLDER, 'zeeguu_api', API_REPO_URL)
     endpoints_dict = build_api_endpoints_dictionary(ENDPOINTS_FOLDER)
     caller_dict = build_api_caller_dictionary(CALLERS_FOLDER)
     return build_usage_list(endpoints_dict, caller_dict)
@@ -21,7 +24,7 @@ app.layout = html.Div(style={'display': 'flex', 'height': '100vh', 'fontFamily':
                     'borderRight': '1px solid #ddd'}, children=[
         html.H3("Display Options", style={'textAlign': 'center', 'marginBottom': '20px', 'color': '#333'}),
         html.Hr(),
-        html.Label("Frontend Target Folders:",
+        html.Label("Frontend Target Modules:",
                    style={'fontWeight': 'bold', 'marginTop': '15px', 'marginBottom': '5px', 'display': 'block',
                           'color': '#555'}),
         dcc.Checklist(
